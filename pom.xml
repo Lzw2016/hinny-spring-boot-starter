@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--统一版本修改 versions:set -DnewVersion=0.0.1-SNAPSHOT-->
+    <artifactId>hinny-spring-boot-starter</artifactId>
+    <version>${revision}</version>
+    <packaging>jar</packaging>
+
+    <description>clever-hinny与SpringBoot整合</description>
+    <url>https://github.com/Lzw2016/hinny-spring-boot-starter.git</url>
+
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://github.com/Lzw2016/hinny-spring-boot-starter/raw/master/LICENSE</url>
+        </license>
+    </licenses>
+
+    <parent>
+        <groupId>org.clever</groupId>
+        <artifactId>clever-parent</artifactId>
+        <version>2.1.16.1.RELEASE</version>
+        <relativePath/>
+    </parent>
+
+    <repositories>
+        <repository>
+            <id>nexus-central</id>
+            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+        </repository>
+        <repository>
+            <id>nexus-central-2</id>
+            <url>http://central.maven.org/maven2/</url>
+        </repository>
+        <repository>
+            <id>nexus-spring</id>
+            <url>https://repo.spring.io/libs-release/</url>
+        </repository>
+        <repository>
+            <id>nexus-snapshots</id>
+            <url>http://nexus.msvc.top:8081/repository/maven-snapshots/</url>
+        </repository>
+        <repository>
+            <id>nexus-releases</id>
+            <url>http://nexus.msvc.top:8081/repository/maven-releases/</url>
+        </repository>
+    </repositories>
+
+    <properties>
+        <revision>1.0.0-SNAPSHOT</revision>
+        <java.version>1.8</java.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <clever-hinny.version>1.0.0-SNAPSHOT</clever-hinny.version>
+        <clever-hinny-graaljs-wrap.version>1.0.0-SNAPSHOT</clever-hinny-graaljs-wrap.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!--clever hinny-->
+            <dependency>
+                <groupId>org.clever</groupId>
+                <artifactId>clever-hinny-graaljs</artifactId>
+                <version>${clever-hinny.version}</version>
+            </dependency>
+            <!--clever hinny graaljs wrap-->
+            <dependency>
+                <groupId>org.clever</groupId>
+                <artifactId>graaljs-data-jdbc</artifactId>
+                <version>${clever-hinny-graaljs-wrap.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.clever</groupId>
+                <artifactId>graaljs-mvc</artifactId>
+                <version>${clever-hinny-graaljs-wrap.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <!--spring-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+        </dependency>
+        <!--hinny-->
+        <dependency>
+            <groupId>org.clever</groupId>
+            <artifactId>clever-hinny-graaljs</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.clever</groupId>
+            <artifactId>graaljs-data-jdbc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.clever</groupId>
+            <artifactId>graaljs-mvc</artifactId>
+        </dependency>
+    </dependencies>
+</project>
