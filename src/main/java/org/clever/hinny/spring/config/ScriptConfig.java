@@ -16,6 +16,10 @@ import java.util.Set;
 @Data
 public class ScriptConfig implements Serializable {
     /**
+     * 文件系统类型
+     */
+    private FileSystemType fileSystemType = FileSystemType.FileSystem;
+    /**
      * 脚本文件路径
      */
     private String scriptPath;

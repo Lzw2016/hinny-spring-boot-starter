@@ -2,10 +2,16 @@ package org.clever.hinny.spring.autoconfigure;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOCase;
-import org.clever.hinny.data.jdbc.dynamic.MyBatisMapperSql;
+import org.clever.hinny.api.utils.Assert;
 import org.clever.hinny.data.jdbc.dynamic.watch.FileSystemWatcher;
+import org.clever.hinny.data.jdbc.mybatis.ClassPathMyBatisMapperSql;
+import org.clever.hinny.data.jdbc.mybatis.FileSystemMyBatisMapperSql;
+import org.clever.hinny.data.jdbc.mybatis.MyBatisMapperSql;
 import org.clever.hinny.spring.config.Constant;
+import org.clever.hinny.spring.config.FileSystemType;
 import org.clever.hinny.spring.config.MyBatisMapperConfig;
+import org.clever.hinny.spring.config.ScriptConfig;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -14,6 +20,7 @@ import org.springframework.context.annotation.Configuration;
 import org.xml.sax.SAXParseException;
 
 import java.io.File;
+import java.util.Objects;
 
 /**
  * 作者：lizw <br/>
@@ -29,22 +36,36 @@ public class AutoConfigureMyBatisMapperSql {
         this.myBatisMapperConfig = myBatisMapperConfig;
     }
 
-    @Bean
+    @Bean("myBatisMapperSql")
     @ConditionalOnMissingBean
-    public MyBatisMapperSql myBatisMapperSql() {
-        return new MyBatisMapperSql(myBatisMapperConfig.getMapperPath());
+    public MyBatisMapperSql myBatisMapperSql(ObjectProvider<ScriptConfig> scriptConfig) {
+        final FileSystemType fileSystemType = Objects.requireNonNull(scriptConfig.getIfAvailable()).getFileSystemType();
+        MyBatisMapperSql myBatisMapperSql;
+        if (Objects.equals(fileSystemType, FileSystemType.FileSystem)) {
+            String scriptAbsolutePath = new File(myBatisMapperConfig.getMapperPath()).getAbsolutePath();
+            log.info("#Mapper.xml文件绝对路径: {}", scriptAbsolutePath);
+            myBatisMapperSql = new FileSystemMyBatisMapperSql(myBatisMapperConfig.getMapperPath());
+        } else if (Objects.equals(fileSystemType, FileSystemType.Jar)) {
+            log.info("#Mapper.xml文件classpath文件模式: {}", myBatisMapperConfig.getMapperPath());
+            myBatisMapperSql = new ClassPathMyBatisMapperSql(myBatisMapperConfig.getMapperPath());
+        } else {
+            throw new IllegalArgumentException("配置fileSystemType错误：fileSystemType=" + fileSystemType);
+        }
+        return myBatisMapperSql;
     }
 
     @Bean("mapperFileWatcher")
     @ConditionalOnMissingBean
     @ConditionalOnProperty(prefix = Constant.Config_MyBatis_Mapper_Config, name = "enable-watcher", havingValue = "true", matchIfMissing = true)
-    public FileSystemWatcher fileSystemWatcher(MyBatisMapperSql mapperSql) {
+    public FileSystemWatcher mapperFileWatcher(MyBatisMapperSql mapperSql) {
+        Assert.isTrue(mapperSql instanceof FileSystemMyBatisMapperSql, "当前MyBatisMapperSql类型[+" + mapperSql.getClass().getName() + "+]不支持监听文件变化");
+        FileSystemMyBatisMapperSql fileSystemMyBatisMapperSql = (FileSystemMyBatisMapperSql) mapperSql;
         FileSystemWatcher watcher = new FileSystemWatcher(
                 myBatisMapperConfig.getMapperPath(),
                 file -> {
                     final String absPath = file.getAbsolutePath();
                     try {
-                        mapperSql.reloadFile(absPath);
+                        fileSystemMyBatisMapperSql.reloadFile(absPath);
                     } catch (Exception e) {
                         String error = e.getMessage();
                         if (e.getCause() instanceof SAXParseException) {

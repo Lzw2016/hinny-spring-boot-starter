@@ -5,13 +5,16 @@ import org.apache.commons.io.IOCase;
 import org.apache.commons.pool2.BasePooledObjectFactory;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.clever.hinny.api.ScriptEngineInstance;
+import org.clever.hinny.api.folder.ClassPathFolder;
 import org.clever.hinny.api.folder.FileSystemFolder;
 import org.clever.hinny.api.folder.Folder;
 import org.clever.hinny.api.pool.EngineInstancePool;
 import org.clever.hinny.api.pool.GenericEngineInstancePool;
+import org.clever.hinny.api.utils.Assert;
 import org.clever.hinny.api.watch.FileSystemWatcher;
 import org.clever.hinny.graaljs.pool.GraalSingleEngineFactory;
 import org.clever.hinny.spring.config.Constant;
+import org.clever.hinny.spring.config.FileSystemType;
 import org.clever.hinny.spring.config.ScriptConfig;
 import org.clever.hinny.spring.config.ScriptEnginePoolConfig;
 import org.graalvm.polyglot.Context;
@@ -24,6 +27,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.File;
+import java.util.Objects;
 
 /**
  * 作者：lizw <br/>
@@ -46,23 +50,32 @@ public class AutoConfigureEngineInstancePool {
         this.scriptAbsolutePath = new File(scriptConfig.getScriptPath()).getAbsolutePath();
     }
 
-    @Bean
+    @Bean("scriptFolder")
     @ConditionalOnMissingBean
-    public Folder folder() {
-        log.info("#脚本文件绝对路径: {}", scriptAbsolutePath);
-        return FileSystemFolder.createRootPath(scriptConfig.getScriptPath());
+    public Folder scriptFolder() {
+        Folder folder;
+        if (Objects.equals(scriptConfig.getFileSystemType(), FileSystemType.FileSystem)) {
+            log.info("#脚本文件绝对路径: {}", scriptAbsolutePath);
+            folder = FileSystemFolder.createRootPath(scriptConfig.getScriptPath());
+        } else if (Objects.equals(scriptConfig.getFileSystemType(), FileSystemType.Jar)) {
+            log.info("#脚本文件classpath文件模式: {}", "classpath:**/*.*");
+            folder = ClassPathFolder.createRootPath("classpath:**/*.*", scriptConfig.getScriptPath());
+        } else {
+            throw new IllegalArgumentException("配置fileSystemType错误：fileSystemType=" + scriptConfig.getFileSystemType());
+        }
+        return folder;
     }
 
-    @Bean
+    @Bean("pooledObjectFactory")
     @ConditionalOnMissingBean
-    public BasePooledObjectFactory<ScriptEngineInstance<Context, Value>> graalSingleEngineFactory(Folder rootFolder) {
+    public BasePooledObjectFactory<ScriptEngineInstance<Context, Value>> pooledObjectFactory(Folder rootFolder) {
         Engine engine = Engine.newBuilder()
                 .useSystemProperties(true)
                 .build();
         return new GraalSingleEngineFactory(rootFolder, engine);
     }
 
-    @Bean
+    @Bean("engineInstancePool")
     @ConditionalOnMissingBean
     public EngineInstancePool<Context, Value> engineInstancePool(BasePooledObjectFactory<ScriptEngineInstance<Context, Value>> graalEngineFactory) {
         // 创建对象池配置
@@ -93,7 +106,11 @@ public class AutoConfigureEngineInstancePool {
     @Bean("scriptFileWatcher")
     @ConditionalOnMissingBean
     @ConditionalOnProperty(prefix = Constant.Config_Root, name = "script-file-watcher.enable-watcher", havingValue = "true", matchIfMissing = true)
-    public FileSystemWatcher fileSystemWatcher(EngineInstancePool<Context, Value> pool) {
+    public FileSystemWatcher scriptFileWatcher(EngineInstancePool<Context, Value> pool) {
+        Assert.isTrue(
+                Objects.equals(scriptConfig.getFileSystemType(), FileSystemType.FileSystem),
+                "当前FileSystemType[" + scriptConfig.getFileSystemType() + "]不支持监听文件变化"
+        );
         FileSystemWatcher fileSystemWatcher = new FileSystemWatcher(
                 scriptConfig.getScriptPath(),
                 scriptConfig.getScriptFileWatcher().getInclude(),
