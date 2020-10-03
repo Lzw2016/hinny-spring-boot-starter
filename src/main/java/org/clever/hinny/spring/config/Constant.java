@@ -13,4 +13,6 @@ public interface Constant {
     String Config_Engine_Instance_Pool = Config_Root + ".engine-instance-pool";
 
     String Config_MyBatis_Mapper_Config = Config_Root + ".mybatis-mapper-config";
+
+    String Config_Multiple_Jdbc_Config = Config_Root + ".multiple-jdbc";
 }

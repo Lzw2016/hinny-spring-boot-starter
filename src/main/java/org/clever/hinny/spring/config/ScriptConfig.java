@@ -2,6 +2,7 @@ package org.clever.hinny.spring.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 import java.time.Duration;
@@ -26,6 +27,7 @@ public class ScriptConfig implements Serializable {
     /**
      * 脚本文件监听配置
      */
+    @NestedConfigurationProperty
     private FileWatcherConfig scriptFileWatcher = new FileWatcherConfig();
 
     @Data

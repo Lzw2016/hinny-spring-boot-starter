@@ -69,7 +69,32 @@
             <!--clever hinny graaljs wrap-->
             <dependency>
                 <groupId>org.clever</groupId>
+                <artifactId>graaljs-data-elasticsearch</artifactId>
+                <version>${clever-hinny-graaljs-wrap.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.clever</groupId>
                 <artifactId>graaljs-data-jdbc</artifactId>
+                <version>${clever-hinny-graaljs-wrap.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.clever</groupId>
+                <artifactId>graaljs-data-kafka</artifactId>
+                <version>${clever-hinny-graaljs-wrap.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.clever</groupId>
+                <artifactId>graaljs-data-rabbitmq</artifactId>
+                <version>${clever-hinny-graaljs-wrap.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.clever</groupId>
+                <artifactId>graaljs-data-redis</artifactId>
+                <version>${clever-hinny-graaljs-wrap.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.clever</groupId>
+                <artifactId>graaljs-meta-data</artifactId>
                 <version>${clever-hinny-graaljs-wrap.version}</version>
             </dependency>
             <dependency>
@@ -103,6 +128,37 @@
         <dependency>
             <groupId>org.clever</groupId>
             <artifactId>graaljs-mvc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.clever</groupId>
+            <artifactId>graaljs-meta-data</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.clever</groupId>
+            <artifactId>graaljs-data-elasticsearch</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.clever</groupId>
+            <artifactId>graaljs-data-kafka</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.clever</groupId>
+            <artifactId>graaljs-data-rabbitmq</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.clever</groupId>
+            <artifactId>graaljs-data-redis</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <!--lib-->
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>
