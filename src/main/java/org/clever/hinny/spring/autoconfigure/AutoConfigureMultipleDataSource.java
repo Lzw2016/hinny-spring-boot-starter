@@ -39,6 +39,7 @@ public class AutoConfigureMultipleDataSource implements CommandLineRunner {
     private final boolean CanInit_JdbcDatabase = canInitJdbcDatabase();
     private final boolean CanInit_MyBatisJdbcDatabase = canInitMyBatisJdbcDatabase();
     private final boolean CanInit_MateDataManage = canInitMateDataManage();
+    private final boolean Exists_HikariDataSource = existsHikariDataSource();
 
     private final List<DataSource> dataSourceList;
     private final MultipleDataSourceConfig multipleDataSourceConfig;
@@ -55,6 +56,10 @@ public class AutoConfigureMultipleDataSource implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+        if (!Exists_HikariDataSource) {
+            log.info("缺少依赖 com.zaxxer:HikariCP");
+            return;
+        }
         if (!CanInit_JdbcDataSource) {
             log.warn("无法初始化hinny jdbc模块，缺少class lib: graaljs-data-jdbc");
             return;
@@ -139,6 +144,15 @@ public class AutoConfigureMultipleDataSource implements CommandLineRunner {
         if (CanInit_MateDataManage) {
             MateDataManage.Instance.setDefault(multipleDataSourceConfig.getDefaultName());
             log.info("默认的 MateDataManage: {}", multipleDataSourceConfig.getDefaultName());
+        }
+    }
+
+    protected static boolean existsHikariDataSource() {
+        try {
+            Class.forName("com.zaxxer.hikari.HikariDataSource");
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
         }
     }
 
