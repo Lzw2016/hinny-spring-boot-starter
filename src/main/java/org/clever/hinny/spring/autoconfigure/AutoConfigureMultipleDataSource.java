@@ -62,6 +62,9 @@ public class AutoConfigureMultipleDataSource implements CommandLineRunner {
             return;
         }
         initialized = true;
+        if (multipleDataSourceConfig.isDisable()) {
+            return;
+        }
         if (!Exists_HikariDataSource) {
             log.info("缺少依赖 com.zaxxer:HikariCP");
             return;
