@@ -45,6 +45,8 @@ public class AutoConfigureMultipleDataSource implements CommandLineRunner {
     private final MultipleDataSourceConfig multipleDataSourceConfig;
     private final MyBatisMapperSql mybatisMapperSql;
 
+    protected boolean initialized = false;
+
     public AutoConfigureMultipleDataSource(
             ObjectProvider<List<DataSource>> dataSourceList,
             ObjectProvider<MultipleDataSourceConfig> multipleDataSourceConfig,
@@ -56,6 +58,10 @@ public class AutoConfigureMultipleDataSource implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+        if (initialized) {
+            return;
+        }
+        initialized = true;
         if (!Exists_HikariDataSource) {
             log.info("缺少依赖 com.zaxxer:HikariCP");
             return;
