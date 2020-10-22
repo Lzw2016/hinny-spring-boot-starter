@@ -14,25 +14,14 @@ import org.clever.hinny.spring.config.MultipleDataSourceConfig;
 import org.clever.hinny.spring.utils.MergeDataSourceConfig;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 
 import javax.sql.DataSource;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 作者：lizw <br/>
  * 创建时间：2020/10/03 19:27 <br/>
  */
-@Order
-@Configuration
-@AutoConfigureAfter({AutoConfigureMyBatisMapperSql.class})
-@EnableConfigurationProperties({MultipleDataSourceConfig.class})
 @Slf4j
 public class AutoConfigureMultipleDataSource implements CommandLineRunner {
     private final boolean CanInit_JdbcDataSource = canInitJdbcDataSource();
@@ -41,17 +30,19 @@ public class AutoConfigureMultipleDataSource implements CommandLineRunner {
     private final boolean CanInit_MateDataManage = canInitMateDataManage();
     private final boolean Exists_HikariDataSource = existsHikariDataSource();
 
-    private final List<DataSource> dataSourceList;
+    private final List<DataSource> dataSourceList = new ArrayList<>();
     private final MultipleDataSourceConfig multipleDataSourceConfig;
     private final MyBatisMapperSql mybatisMapperSql;
 
     protected boolean initialized = false;
 
     public AutoConfigureMultipleDataSource(
-            ObjectProvider<List<DataSource>> dataSourceList,
+            ObjectProvider<DataSource> dataSourceList,
             ObjectProvider<MultipleDataSourceConfig> multipleDataSourceConfig,
             ObjectProvider<MyBatisMapperSql> mybatisMapperSql) {
-        this.dataSourceList = dataSourceList.getIfAvailable();
+        for (DataSource dataSource : dataSourceList) {
+            this.dataSourceList.add(dataSource);
+        }
         this.multipleDataSourceConfig = multipleDataSourceConfig.getIfAvailable() == null ? new MultipleDataSourceConfig() : multipleDataSourceConfig.getIfAvailable();
         this.mybatisMapperSql = mybatisMapperSql.getIfAvailable();
     }

@@ -2,5 +2,7 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 org.clever.hinny.spring.autoconfigure.AutoConfigureMyBatisMapperSql,\
 org.clever.hinny.spring.autoconfigure.AutoConfigureEngineInstancePool,\
 org.clever.hinny.spring.autoconfigure.AutoConfigureMvcHandler,\
-org.clever.hinny.spring.autoconfigure.ServerWebMvcConfigurer,\
+org.clever.hinny.spring.autoconfigure.ServerWebMvcConfigurer
+
+org.springframework.boot.CommandLineRunner=\
 org.clever.hinny.spring.autoconfigure.AutoConfigureMultipleDataSource
