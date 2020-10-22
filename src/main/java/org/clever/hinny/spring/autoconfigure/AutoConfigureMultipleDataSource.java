@@ -14,7 +14,10 @@ import org.clever.hinny.spring.config.MultipleDataSourceConfig;
 import org.clever.hinny.spring.utils.MergeDataSourceConfig;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.stereotype.Component;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 
 import javax.sql.DataSource;
 import java.util.*;
@@ -23,7 +26,10 @@ import java.util.*;
  * 作者：lizw <br/>
  * 创建时间：2020/10/03 19:27 <br/>
  */
-@Component
+@Order
+@Configuration
+@AutoConfigureAfter({AutoConfigureMyBatisMapperSql.class})
+@EnableConfigurationProperties({MultipleDataSourceConfig.class})
 @Slf4j
 public class AutoConfigureMultipleDataSource implements CommandLineRunner {
     private final boolean CanInit_JdbcDataSource = canInitJdbcDataSource();
