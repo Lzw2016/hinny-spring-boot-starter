@@ -64,29 +64,24 @@ public class AutoConfigureMultipleDataSource implements CommandLineRunner {
             log.warn("无法初始化hinny jdbc模块，缺少class lib: graaljs-data-jdbc");
             return;
         }
-        int dataSourceCount = multipleDataSourceConfig.getJdbcMap().size();
-        if (dataSourceList != null) {
-            dataSourceCount = dataSourceCount + dataSourceList.size();
-        }
+        int dataSourceCount = multipleDataSourceConfig.getJdbcMap().size() + dataSourceList.size();
         final Map<String, DataSource> dataSourceMap = new HashMap<>(dataSourceCount);
         // 加入已存在的数据源
-        if (dataSourceList != null) {
-            for (DataSource dataSource : dataSourceList) {
-                String name = null;
-                if (dataSource instanceof HikariDataSource) {
-                    HikariDataSource tmp = (HikariDataSource) dataSource;
-                    name = tmp.getPoolName();
-                }
-                if (StringUtils.isBlank(name)) {
-                    name = dataSource.toString();
-                }
-                if (dataSourceMap.containsKey(name)) {
-                    throw new RuntimeException("JdbcDataSource 名称重复: " + name);
-                }
-                dataSourceMap.put(name, dataSource);
-                if (StringUtils.isBlank(multipleDataSourceConfig.getDefaultName())) {
-                    multipleDataSourceConfig.setDefaultName(name);
-                }
+        for (DataSource dataSource : dataSourceList) {
+            String name = null;
+            if (dataSource instanceof HikariDataSource) {
+                HikariDataSource tmp = (HikariDataSource) dataSource;
+                name = tmp.getPoolName();
+            }
+            if (StringUtils.isBlank(name)) {
+                name = dataSource.toString();
+            }
+            if (dataSourceMap.containsKey(name)) {
+                throw new RuntimeException("JdbcDataSource 名称重复: " + name);
+            }
+            dataSourceMap.put(name, dataSource);
+            if (StringUtils.isBlank(multipleDataSourceConfig.getDefaultName())) {
+                multipleDataSourceConfig.setDefaultName(name);
             }
         }
         if (StringUtils.isBlank(multipleDataSourceConfig.getDefaultName())) {
