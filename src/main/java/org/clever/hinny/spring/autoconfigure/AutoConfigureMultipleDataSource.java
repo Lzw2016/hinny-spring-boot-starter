@@ -20,10 +20,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
 import javax.sql.DataSource;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 作者：lizw <br/>
@@ -43,20 +40,32 @@ public class AutoConfigureMultipleDataSource implements CommandLineRunner {
     private final boolean CanInit_MateDataManage = canInitMateDataManage();
     private final boolean Exists_HikariDataSource = existsHikariDataSource();
 
-    private final List<DataSource> dataSourceList;
+    private final List<DataSource> dataSourceList = new ArrayList<>();
     private final MultipleDataSourceConfig multipleDataSourceConfig;
     private final MyBatisMapperSql mybatisMapperSql;
 
+    protected boolean initialized = false;
+
     public AutoConfigureMultipleDataSource(
-            ObjectProvider<List<DataSource>> dataSourceList,
+            ObjectProvider<DataSource> dataSourceList,
             ObjectProvider<MultipleDataSourceConfig> multipleDataSourceConfig,
             ObjectProvider<MyBatisMapperSql> mybatisMapperSql) {
-        this.dataSourceList = dataSourceList.getIfAvailable();
+        for (DataSource dataSource : dataSourceList) {
+            this.dataSourceList.add(dataSource);
+        }
         this.multipleDataSourceConfig = multipleDataSourceConfig.getIfAvailable() == null ? new MultipleDataSourceConfig() : multipleDataSourceConfig.getIfAvailable();
         this.mybatisMapperSql = mybatisMapperSql.getIfAvailable();
     }
 
     @Override
+    public void run(String... args) {
+        if (initialized) {
+            return;
+        }
+        initialized = true;
+        if (multipleDataSourceConfig.isDisable()) {
+            return;
+        }
     public synchronized void run(String... args) {
         if (initialized) {
             return;
@@ -70,29 +79,24 @@ public class AutoConfigureMultipleDataSource implements CommandLineRunner {
             log.warn("无法初始化hinny jdbc模块，缺少class lib: graaljs-data-jdbc");
             return;
         }
-        int dataSourceCount = multipleDataSourceConfig.getJdbcMap().size();
-        if (dataSourceList != null) {
-            dataSourceCount = dataSourceCount + dataSourceList.size();
-        }
+        int dataSourceCount = multipleDataSourceConfig.getJdbcMap().size() + dataSourceList.size();
         final Map<String, DataSource> dataSourceMap = new HashMap<>(dataSourceCount);
         // 加入已存在的数据源
-        if (dataSourceList != null) {
-            for (DataSource dataSource : dataSourceList) {
-                String name = null;
-                if (dataSource instanceof HikariDataSource) {
-                    HikariDataSource tmp = (HikariDataSource) dataSource;
-                    name = tmp.getPoolName();
-                }
-                if (StringUtils.isBlank(name)) {
-                    name = dataSource.toString();
-                }
-                if (dataSourceMap.containsKey(name)) {
-                    throw new RuntimeException("JdbcDataSource 名称重复: " + name);
-                }
-                dataSourceMap.put(name, dataSource);
-                if (StringUtils.isBlank(multipleDataSourceConfig.getDefaultName())) {
-                    multipleDataSourceConfig.setDefaultName(name);
-                }
+        for (DataSource dataSource : dataSourceList) {
+            String name = null;
+            if (dataSource instanceof HikariDataSource) {
+                HikariDataSource tmp = (HikariDataSource) dataSource;
+                name = tmp.getPoolName();
+            }
+            if (StringUtils.isBlank(name)) {
+                name = dataSource.toString();
+            }
+            if (dataSourceMap.containsKey(name)) {
+                throw new RuntimeException("JdbcDataSource 名称重复: " + name);
+            }
+            dataSourceMap.put(name, dataSource);
+            if (StringUtils.isBlank(multipleDataSourceConfig.getDefaultName())) {
+                multipleDataSourceConfig.setDefaultName(name);
             }
         }
         if (StringUtils.isBlank(multipleDataSourceConfig.getDefaultName())) {

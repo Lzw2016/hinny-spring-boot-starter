@@ -5,3 +5,8 @@ org.clever.hinny.spring.autoconfigure.AutoConfigureMvcHandler,\
 org.clever.hinny.spring.autoconfigure.ServerWebMvcConfigurer,\
 org.clever.hinny.spring.autoconfigure.AutoConfigureMultipleDataSource,\
 org.clever.hinny.spring.autoconfigure.AutoConfigureMultipleRedis
+
+org.clever.hinny.spring.autoconfigure.ServerWebMvcConfigurer
+
+org.springframework.boot.CommandLineRunner=\
+org.clever.hinny.spring.autoconfigure.AutoConfigureMultipleDataSource
