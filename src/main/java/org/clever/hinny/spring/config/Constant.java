@@ -15,4 +15,6 @@ public interface Constant {
     String Config_MyBatis_Mapper_Config = Config_Root + ".mybatis-mapper-config";
 
     String Config_Multiple_Jdbc_Config = Config_Root + ".multiple-jdbc";
+
+    String Config_Multiple_Redis_Config = Config_Root + ".multiple-redis";
 }

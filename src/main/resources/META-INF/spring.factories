@@ -3,4 +3,5 @@ org.clever.hinny.spring.autoconfigure.AutoConfigureMyBatisMapperSql,\
 org.clever.hinny.spring.autoconfigure.AutoConfigureEngineInstancePool,\
 org.clever.hinny.spring.autoconfigure.AutoConfigureMvcHandler,\
 org.clever.hinny.spring.autoconfigure.ServerWebMvcConfigurer,\
-org.clever.hinny.spring.autoconfigure.AutoConfigureMultipleDataSource
+org.clever.hinny.spring.autoconfigure.AutoConfigureMultipleDataSource,\
+org.clever.hinny.spring.autoconfigure.AutoConfigureMultipleRedis

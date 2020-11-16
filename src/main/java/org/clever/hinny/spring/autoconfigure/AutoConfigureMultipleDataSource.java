@@ -35,6 +35,8 @@ import java.util.Map;
 @EnableConfigurationProperties({MultipleDataSourceConfig.class})
 @Slf4j
 public class AutoConfigureMultipleDataSource implements CommandLineRunner {
+    protected boolean initialized = false;
+
     private final boolean CanInit_JdbcDataSource = canInitJdbcDataSource();
     private final boolean CanInit_JdbcDatabase = canInitJdbcDatabase();
     private final boolean CanInit_MyBatisJdbcDatabase = canInitMyBatisJdbcDatabase();
@@ -55,7 +57,11 @@ public class AutoConfigureMultipleDataSource implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) {
+    public synchronized void run(String... args) {
+        if (initialized) {
+            return;
+        }
+        initialized = true;
         if (!Exists_HikariDataSource) {
             log.info("缺少依赖 com.zaxxer:HikariCP");
             return;
