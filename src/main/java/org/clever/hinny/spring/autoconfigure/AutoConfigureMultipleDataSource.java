@@ -15,6 +15,7 @@ import org.clever.hinny.spring.utils.MergeDataSourceConfig;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -28,6 +29,7 @@ import java.util.*;
  */
 @Order
 @Configuration
+@ConditionalOnClass({HikariDataSource.class, JdbcDataSource.class, JdbcDatabase.class, MyBatisJdbcDatabase.class})
 @AutoConfigureAfter({AutoConfigureMyBatisMapperSql.class})
 @EnableConfigurationProperties({MultipleDataSourceConfig.class})
 @Slf4j

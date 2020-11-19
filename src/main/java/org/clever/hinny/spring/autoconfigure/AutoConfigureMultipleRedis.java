@@ -26,12 +26,7 @@ import java.util.Map;
  */
 @Order
 @Configuration
-@ConditionalOnClass(name = {
-        "org.springframework.boot.autoconfigure.data.redis.RedisProperties",
-        "org.springframework.data.redis.connection.RedisConnectionFactory",
-        "org.clever.hinny.data.redis.RedisDataSource",
-        "org.clever.hinny.graal.data.redis.RedisDatabase"
-})
+@ConditionalOnClass({RedisProperties.class, RedisConnectionFactory.class, RedisDataSource.class, RedisDatabase.class})
 @EnableConfigurationProperties({MultipleRedisConfig.class})
 @Slf4j
 public class AutoConfigureMultipleRedis implements CommandLineRunner {
