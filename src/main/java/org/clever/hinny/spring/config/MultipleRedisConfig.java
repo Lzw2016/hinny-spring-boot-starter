@@ -16,6 +16,10 @@ import java.util.Map;
 @Data
 public class MultipleRedisConfig {
     /**
+     * 是否禁用MultipleRedis配置
+     */
+    private boolean disable = false;
+    /**
      * 默认的数据源名称
      */
     private String defaultName = "default";

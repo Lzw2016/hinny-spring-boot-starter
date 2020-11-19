@@ -35,11 +35,11 @@ import java.util.Map;
 @EnableConfigurationProperties({MultipleRedisConfig.class})
 @Slf4j
 public class AutoConfigureMultipleRedis implements CommandLineRunner {
-    protected boolean initialized = false;
-
     private final MultipleRedisConfig multipleRedisConfig;
     private final List<RedisConnectionFactory> redisConnectionFactoryList;
     private final ObjectMapper objectMapper;
+
+    protected boolean initialized = false;
 
     public AutoConfigureMultipleRedis(ObjectProvider<List<RedisConnectionFactory>> redisConnectionFactoryList, MultipleRedisConfig multipleRedisConfig) {
         this.redisConnectionFactoryList = redisConnectionFactoryList.getIfAvailable();
@@ -53,6 +53,9 @@ public class AutoConfigureMultipleRedis implements CommandLineRunner {
             return;
         }
         initialized = true;
+        if (multipleRedisConfig.isDisable()) {
+            return;
+        }
         // 加入已存在的数据源
         if (redisConnectionFactoryList != null) {
             int index = 0;
