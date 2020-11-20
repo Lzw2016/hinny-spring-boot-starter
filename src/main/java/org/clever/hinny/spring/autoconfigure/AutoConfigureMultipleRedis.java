@@ -57,7 +57,9 @@ public class AutoConfigureMultipleRedis implements CommandLineRunner {
             for (RedisConnectionFactory redisConnectionFactory : redisConnectionFactoryList) {
                 index++;
                 RedisDataSource redisDataSource = new RedisDataSource(redisConnectionFactory, objectMapper);
-                RedisDatabase.Instance.add(String.format("autowired-redis-%s", index), redisDataSource);
+                String name = String.format("autowired-redis-%s", index);
+                RedisDatabase.Instance.add(name, redisDataSource);
+                log.info("初始化 RedisDataSource: {}", name);
             }
         }
         // 初始化配置的数据源
@@ -70,12 +72,14 @@ public class AutoConfigureMultipleRedis implements CommandLineRunner {
             redisConfig = MergeRedisProperties.mergeConfig(globalConfig, redisConfig);
             RedisDataSource redisDataSource = new RedisDataSource(redisConfig, objectMapper);
             RedisDatabase.Instance.add(name, redisDataSource);
+            log.info("初始化 RedisDataSource: {}", name);
             destroyMap.put(name, redisDataSource);
         });
         if (!RedisDatabase.Instance.hasDataSource(multipleRedisConfig.getDefaultName())) {
             throw new RuntimeException("默认的redis数据源不存在,DefaultName: " + multipleRedisConfig.getDefaultName());
         }
         RedisDatabase.Instance.setDefault(multipleRedisConfig.getDefaultName());
+        log.info("默认的 RedisDataSource: {}", multipleRedisConfig.getDefaultName());
         // 关闭连接池
         Runtime.getRuntime().addShutdownHook(new Thread(() -> destroyMap.forEach((name, redisDataSource) -> {
             log.info("[" + name + "] RedisDataSource Destroy start...");

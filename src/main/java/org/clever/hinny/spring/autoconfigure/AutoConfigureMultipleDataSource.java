@@ -126,29 +126,29 @@ public class AutoConfigureMultipleDataSource implements CommandLineRunner {
             JdbcDataSource jdbcDataSource = new JdbcDataSource(dataSource);
             if (CanInit_JdbcDatabase) {
                 JdbcDatabase.Instance.add(name, jdbcDataSource);
-                log.info("初始化 JdbcDatabase: {}", name);
+                log.info("初始化 JdbcDataSource: {}", name);
             }
             if (CanInit_MyBatisJdbcDatabase && mybatisMapperSql != null) {
                 MyBatisJdbcDataSource myBatisJdbcDataSource = new MyBatisJdbcDataSource(jdbcDataSource, mybatisMapperSql);
                 MyBatisJdbcDatabase.Instance.add(name, myBatisJdbcDataSource);
-                log.info("初始化 MyBatisJdbcDatabase: {}", name);
+                log.info("初始化 MyBatisJdbcDataSource: {}", name);
             }
             if (CanInit_MateDataManage) {
                 MateDataManage.Instance.add(name, dataSource);
-                log.info("初始化 MateDataManage: {}", name);
+                log.info("初始化 MateDataManage DataSource: {}", name);
             }
         }
         if (CanInit_JdbcDatabase) {
             JdbcDatabase.Instance.setDefault(multipleDataSourceConfig.getDefaultName());
-            log.info("默认的 JdbcDatabase: {}", JdbcDatabase.Instance.getDefaultName());
+            log.info("默认的 JdbcDataSource: {}", JdbcDatabase.Instance.getDefaultName());
         }
         if (CanInit_MyBatisJdbcDatabase && mybatisMapperSql != null) {
             MyBatisJdbcDatabase.Instance.setDefault(multipleDataSourceConfig.getDefaultName());
-            log.info("默认的 MyBatisJdbcDatabase: {}", multipleDataSourceConfig.getDefaultName());
+            log.info("默认的 MyBatisJdbcDataSource: {}", multipleDataSourceConfig.getDefaultName());
         }
         if (CanInit_MateDataManage) {
             MateDataManage.Instance.setDefault(multipleDataSourceConfig.getDefaultName());
-            log.info("默认的 MateDataManage: {}", multipleDataSourceConfig.getDefaultName());
+            log.info("默认的 MateDataManage DataSource: {}", multipleDataSourceConfig.getDefaultName());
         }
     }
 
