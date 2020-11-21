@@ -58,8 +58,8 @@ public class MergeRedisProperties {
         if (target.getJedis() != null && source.getJedis() != null) {
             if (target.getJedis().getPool() == null) {
                 target.getJedis().setPool(new RedisProperties.Pool());
-                target.getJedis().setPool(mergePool(source.getJedis().getPool(), target.getJedis().getPool()));
             }
+            target.getJedis().setPool(mergePool(source.getJedis().getPool(), target.getJedis().getPool()));
         }
         if (target.getLettuce() != null && source.getLettuce() != null) {
             if (Duration.ofMillis(100).equals(target.getLettuce().getShutdownTimeout())) {
@@ -67,8 +67,8 @@ public class MergeRedisProperties {
             }
             if (target.getLettuce().getPool() == null) {
                 target.getLettuce().setPool(new RedisProperties.Pool());
-                target.getLettuce().setPool(mergePool(source.getLettuce().getPool(), target.getLettuce().getPool()));
             }
+            target.getLettuce().setPool(mergePool(source.getLettuce().getPool(), target.getLettuce().getPool()));
         }
         return target;
     }
