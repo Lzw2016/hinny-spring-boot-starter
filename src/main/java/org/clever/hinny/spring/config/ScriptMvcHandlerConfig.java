@@ -1,7 +1,9 @@
 package org.clever.hinny.spring.config;
 
 import lombok.Data;
+import org.clever.hinny.mvc.ScriptHandlerCorsConfig;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -34,6 +36,12 @@ public class ScriptMvcHandlerConfig implements Serializable {
         add(".json");
         add(".action'");
     }};
+
+    /**
+     * 跨域配置
+     */
+    @NestedConfigurationProperty
+    private ScriptHandlerCorsConfig corsConfig = new ScriptHandlerCorsConfig();
 
     @Data
     public static class PrefixMapping implements Serializable {

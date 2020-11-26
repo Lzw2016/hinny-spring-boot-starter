@@ -54,6 +54,7 @@ public class AutoConfigureMvcHandler {
         return new HttpRequestGraalScriptHandler(
                 supportPrefix,
                 scriptMvcHandlerConfig.getSupportSuffix(),
+                scriptMvcHandlerConfig.getCorsConfig(),
                 Objects.requireNonNull(pool.getIfAvailable()),
                 exceptionResolver == null ? DefaultExceptionResolver.Instance : exceptionResolver,
                 conversionService
